@@ -17,6 +17,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LADM_U4_PU_ASISTENCIA_MAESTRO_DACV">
         <activity
+            android:name=".ListActivity"
+            android:exported="false" />
+        <activity
             android:name=".ListDeviceActivity"
             android:exported="false" />
         <activity

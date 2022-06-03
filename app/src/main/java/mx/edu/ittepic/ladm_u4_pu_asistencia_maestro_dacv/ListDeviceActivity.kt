@@ -100,7 +100,7 @@ class ListDeviceActivity : AppCompatActivity() {
                 //val intent = Intent()
                 intent.putExtra("deviceAddress", address)
                 intent.putExtra("device", mySelectedBluetoothDevice)
-
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 //setResult(RESULT_OK, intent)
                 startActivity(intent)
                 finish()

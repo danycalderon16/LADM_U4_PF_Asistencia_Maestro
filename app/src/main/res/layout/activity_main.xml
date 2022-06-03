@@ -20,20 +20,19 @@
         android:layout_marginTop="5dp"
         android:layout_below="@id/tv_device"/>
 
-    <ListView
-        android:id="@+id/list"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="400dp"
         android:layout_below="@id/tv_state"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="0dp"/>
-
+        android:layout_marginTop="10dp"/>
     <Button
         android:id="@+id/btn_guardar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/list"
+        android:layout_below="@id/recycler_view"
         android:layout_marginTop="10dp"
         android:text="Guardar" />
 

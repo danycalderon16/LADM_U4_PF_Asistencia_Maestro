@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "577904234112",
+    "project_id": "ladm-u4-pf-asistencias",
+    "storage_bucket": "ladm-u4-pf-asistencias.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:577904234112:android:cf5c1036aba3f375d0a065",
+        "android_client_info": {
+          "package_name": "mx.edu.ittepic.ladm_u4_pu_asistencia_maestro_dacv"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "577904234112-1dvpl58n172bkc8luadns5v3ul4kpjuq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmJ_KmN80A1mn045feH_BLbj0UdDQCcoo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "577904234112-1dvpl58n172bkc8luadns5v3ul4kpjuq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

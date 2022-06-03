@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.icu.util.GregorianCalendar
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -23,12 +24,18 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.firestore.FirebaseFirestore
+import mx.edu.ittepic.ladm_u4_pu_asistencia_maestro_dacv.adapters.ListAdapter
 import mx.edu.ittepic.ladm_u4_pu_asistencia_maestro_dacv.databinding.ActivityMainBinding
-import java.util.ArrayList
+import mx.edu.ittepic.ladm_u4_pu_asistencia_maestro_dacv.models.List
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
 
     var bluetoothHeadset: BluetoothHeadset? = null
@@ -66,6 +73,10 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var chatUtils : MessageUtils
 
+    lateinit var adapter :ListAdapter
+    lateinit var recyclerView: RecyclerView
+    val arrayList = ArrayList<List>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -94,11 +105,74 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
+
+        recyclerView = binding.recyclerView
+
+        adapter = ListAdapter(arrayList)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = adapter
+
         adapterMainChat = ArrayAdapter(this, android.R.layout.simple_list_item_1)
 
-        binding.list.adapter = adapterMainChat
+       // binding.list.adapter = adapterMainChat
 
         chatUtils = MessageUtils(this,handler)
+
+        binding.verListas.setOnClickListener {
+            startActivity(Intent(this,ListActivity::class.java))
+            var id = ""
+            val cal = GregorianCalendar.getInstance()
+/*
+
+            val list = List()
+            list.noControl = "18401090"
+            list.time = "02/06/2022 11:15"
+            list.name = "Redmi"
+            
+            arrayList.add(list)
+            val list2 = List()
+            list2.noControl = "18401091"
+            list2.time = "02/06/2022 11:16"
+            list2.name = "POCO"
+            arrayList.add(list2)
+            
+            id = cal.get(Calendar.YEAR).toString()+
+                    cal.get(Calendar.MONTH).toString()+
+                    cal.get(Calendar.DAY_OF_MONTH).toString()+
+                    cal.get(Calendar.HOUR).toString()+
+                    cal.get(Calendar.MINUTE).toString()+
+                    cal.get(Calendar.SECOND).toString()+
+                    cal.get(Calendar.MILLISECOND).toString()
+            val data = hashMapOf(
+                "grupo" to "LADM",
+                "dia" to cal.get(Calendar.DAY_OF_MONTH).toString()+" "+
+                        cal.get(Calendar.YEAR).toString()+" "+
+                        cal.get(Calendar.MONTH).toString()
+            )
+
+
+            FirebaseFirestore.getInstance()
+                .collection("listas")
+                .document(id)
+                .set(data)
+                .addOnSuccessListener { 
+                    arrayList.forEach {
+                        val dataN = hashMapOf(
+                            "hora" to it.time,
+                        )
+                        
+                    FirebaseFirestore.getInstance()
+                        .collection("listas")
+                        .document(id)
+                        .collection("lista")
+                        .document(it.noControl)
+                        .set(dataN)
+                        .addOnSuccessListener {
+                            Toast.makeText(this, "Se creo la lista", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }*/
+        }
     }
 
     override fun onStart() {
@@ -265,10 +339,10 @@ class MainActivity : AppCompatActivity() {
         Log.i("##### 266",message.what.toString())
         when (message.what) {
             MESSAGE_STATE_CHANGED -> when (message.arg1) {
-                STATE_NONE -> setState("Not Connected")
-                STATE_LISTEN -> setState("Not Connected")
-                STATE_CONNECTING -> setState("Connecting...")
-                STATE_CONNECTED -> setState("Connected: $connectedDevice")
+                STATE_NONE -> setState("No Conectado")
+                STATE_LISTEN -> setState("No Conectado")
+                STATE_CONNECTING -> setState("Conectando...")
+                STATE_CONNECTED -> setState("Conectado: $connectedDevice")
             }
             MESSAGE_WRITE -> {
                 val buffer1 = message.obj as ByteArray
@@ -280,9 +354,21 @@ class MainActivity : AppCompatActivity() {
                 val buffer = message.obj as ByteArray
                 val inputBuffer = String(buffer, 0, message.arg1)
                 arrayMessage.add(inputBuffer)
+                val current = LocalDateTime.now()
+
+                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+                val formatted = current.format(formatter)
+                val list = List()
+                list.noControl = inputBuffer
+                list.time = formatted
+                list.name = connectedDevice.toString()
+                Log.i("###310",arrayList.size.toString())
+                arrayList.add(list)
+                Log.i("###312",arrayList.size.toString())
                 adapterMainChat?.add(connectedDevice + ": " + inputBuffer)
                 adapterMainChat?.notifyDataSetChanged()
-                binding.list.deferNotifyDataSetChanged()
+                adapter.notifyDataSetChanged()
+                //binding.list.deferNotifyDataSetChanged()
                 Log.i("####### 284 read", inputBuffer)
             }
             MESSAGE_DEVICE_NAME -> {
