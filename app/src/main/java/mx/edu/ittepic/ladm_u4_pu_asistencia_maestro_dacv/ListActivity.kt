@@ -1,6 +1,7 @@
 package mx.edu.ittepic.ladm_u4_pu_asistencia_maestro_dacv
 
 import android.Manifest
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -9,7 +10,9 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
+import android.view.MenuItem
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -39,6 +42,10 @@ class ListActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar!!.title = "Listas disponibles"
+
         binding = ActivityListBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -67,7 +74,7 @@ class ListActivity : AppCompatActivity() {
                             var tv_title = v.findViewById<TextView>(R.id.tv_title)
                             var tv_list = v.findViewById<TextView>(R.id.list_day)
 
-                            tv_title.setText("${list.grupo} lista del día ${list.dia}\n")
+                            tv_title.setText("Grupo: ${list.grupo}\nLista del día:${list.dia}\n\n")
                             tv_list.setText(reporte)
                             builder.setView(v)
                                 .setPositiveButton("OK",
@@ -104,7 +111,16 @@ class ListActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
 
+    }
 
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                Log.i("########33","#########3")
+                return true
+            }
+        }
+        return super.onContextItemSelected(item)
     }
 
     override fun onRequestPermissionsResult(
@@ -171,10 +187,17 @@ class ListActivity : AppCompatActivity() {
             out.write(reporte.toString().toByteArray())
             out.close()
 
-            //exporting
-            val context: Context = applicationContext
+
             val filelocation = File(filesDir, "data.csv")
-            val path: Uri = FileProvider.getUriForFile(
+            if(filelocation.exists()){
+                AlertDialog.Builder(this)
+                    .setTitle("Atención")
+                    .setMessage("El archivo se guardo en:\n" +
+                            "/data/data/mx.edu.ittepic.ladm_u4_pu_asistencia_maestro_dacv/files/$id.csv")
+                    .show()
+            }
+
+           /* val path: Uri = FileProvider.getUriForFile(
                 context,
                 "DACV",
                 filelocation
@@ -183,7 +206,7 @@ class ListActivity : AppCompatActivity() {
             sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(filelocation))
             sendIntent.type = "plain/text"
             startActivityForResult(Intent.createChooser(sendIntent,"Compartir"),33)
-            startActivity(Intent.createChooser(sendIntent, "SHARE"))
+            startActivity(Intent.createChooser(sendIntent, "SHARE"))*/
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -201,6 +224,10 @@ class ListActivity : AppCompatActivity() {
     }
 
     private fun obtenerListas() {
+        val dialog = ProgressDialog(this)
+        dialog.setCancelable(false)
+        dialog.setMessage("Cargando listas")
+        dialog.show()
         FirebaseFirestore.getInstance()
             .collection("listas")
             .get()
@@ -213,6 +240,7 @@ class ListActivity : AppCompatActivity() {
                     list.id = doc.getString("id").toString()
                     arrayList.add(list)
                 }
+                dialog.dismiss()
                 adapter.notifyDataSetChanged()
             }
     }

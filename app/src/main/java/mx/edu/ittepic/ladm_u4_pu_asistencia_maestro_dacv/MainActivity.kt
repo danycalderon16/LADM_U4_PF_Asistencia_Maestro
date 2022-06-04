@@ -247,6 +247,16 @@ class MainActivity : AppCompatActivity() {
                 enableBluetooth()
                 true
             }
+            R.id.menu_help -> {
+                AlertDialog.Builder(this)
+                    .setTitle("¡¡¡IMPORTANTE!!!")
+                    .setMessage("Para poder conectarse con el alumno " +
+                            "los dispositivos previamente YA DEBEN ESTAR VINCULADOS.\n" +
+                            "Se recomienda primero dar conectar en el dispositivo ALUMNO, " +
+                            "y después en el de MAESTRO.")
+                    .show()
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -314,10 +324,10 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     AlertDialog.Builder(this)
                         .setCancelable(false)
-                        .setMessage("Location permission is required.\n Please grant")
-                        .setPositiveButton("Grant",
+                        .setMessage("Se requiere permiso de ubicación.\nPor favor concede")
+                        .setPositiveButton("Conceder",
                             DialogInterface.OnClickListener { dialogInterface, i -> checkPermissions() })
-                        .setNegativeButton("Deny",
+                        .setNegativeButton("Denegar",
                             DialogInterface.OnClickListener { dialogInterface, i -> finish() })
                         .show()
                 }

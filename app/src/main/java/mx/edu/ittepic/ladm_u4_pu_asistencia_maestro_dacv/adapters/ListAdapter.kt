@@ -15,8 +15,8 @@ class ListAdapter (private val list:ArrayList<List>): RecyclerView.Adapter<ListA
 
     inner class  ViewHolder(item: View) :RecyclerView.ViewHolder(item){
         var noControl : TextView = item.findViewById(R.id.no_control)
-        var time : TextView = item.findViewById(R.id.time)
-        var name : TextView = item.findViewById(R.id.name)
+        var hour : TextView = item.findViewById(R.id.hour_list)
+        var date : TextView = item.findViewById(R.id.date_list)
     }
 
 
@@ -27,8 +27,8 @@ class ListAdapter (private val list:ArrayList<List>): RecyclerView.Adapter<ListA
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.noControl.setText(list[position].noControl)
-        holder.time.setText(list[position].date)
-        holder.name.setText(list[position].name)
+        holder.date.setText(list[position].date)
+        holder.hour.setText(list[position].hour)
     }
 
     override fun getItemCount(): Int {

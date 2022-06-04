@@ -25,10 +25,12 @@
         android:theme="@style/Theme.LADM_U4_PU_ASISTENCIA_MAESTRO_DACV">
         <activity
             android:name=".ListActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:parentActivityName=".MainActivity"/>
         <activity
             android:name=".ListDeviceActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:parentActivityName=".MainActivity"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"
