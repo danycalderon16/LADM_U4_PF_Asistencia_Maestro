@@ -27,7 +27,7 @@ class ListAdapter (private val list:ArrayList<List>): RecyclerView.Adapter<ListA
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.noControl.setText(list[position].noControl)
-        holder.time.setText(list[position].time)
+        holder.time.setText(list[position].date)
         holder.name.setText(list[position].name)
     }
 

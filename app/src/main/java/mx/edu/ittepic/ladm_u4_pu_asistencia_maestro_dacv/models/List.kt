@@ -5,7 +5,13 @@ class List {
      * DANIEL ALEJANDRO CALDERÓN VIGREN *
      ************************************/
 
+    var id = ""
     var noControl = ""
     var name = ""
-    var time = ""
+    var date = ""
+    var hour = ""
+
+    override fun toString(): String {
+        return "id $id, nc $noControl, name $name, date $date, hour $hour"
+    }
 }

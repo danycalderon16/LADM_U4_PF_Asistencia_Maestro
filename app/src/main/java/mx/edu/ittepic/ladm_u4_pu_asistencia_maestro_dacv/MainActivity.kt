@@ -11,6 +11,7 @@ import android.content.pm.PackageManager
 import android.icu.util.GregorianCalendar
 import android.os.Bundle
 import android.os.Handler
+import android.text.InputType
 import android.util.Log
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
@@ -21,6 +22,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ArrayAdapter
+import android.widget.EditText
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -99,11 +101,7 @@ class MainActivity : AppCompatActivity() {
 
         bluetoothAdapter?.getProfileProxy(this, profileListener, BluetoothProfile.HEADSET)
         binding.btnGuardar.setOnClickListener {
-            val message: String = "hola"
-            if (!message.isEmpty()) {
-                chatUtils.write(message.toByteArray())
-            }
-
+            escribir()
         }
 
         recyclerView = binding.recyclerView
@@ -120,59 +118,76 @@ class MainActivity : AppCompatActivity() {
 
         binding.verListas.setOnClickListener {
             startActivity(Intent(this,ListActivity::class.java))
-            var id = ""
-            val cal = GregorianCalendar.getInstance()
-/*
+        }
 
-            val list = List()
-            list.noControl = "18401090"
-            list.time = "02/06/2022 11:15"
-            list.name = "Redmi"
-            
-            arrayList.add(list)
-            val list2 = List()
-            list2.noControl = "18401091"
-            list2.time = "02/06/2022 11:16"
-            list2.name = "POCO"
-            arrayList.add(list2)
-            
-            id = cal.get(Calendar.YEAR).toString()+
-                    cal.get(Calendar.MONTH).toString()+
-                    cal.get(Calendar.DAY_OF_MONTH).toString()+
-                    cal.get(Calendar.HOUR).toString()+
-                    cal.get(Calendar.MINUTE).toString()+
-                    cal.get(Calendar.SECOND).toString()+
-                    cal.get(Calendar.MILLISECOND).toString()
+    }
+
+    private fun escribir() {
+        var id = ""
+        var cal = GregorianCalendar.getInstance()
+
+        id = cal.get(Calendar.YEAR).toString()+
+                cal.get(Calendar.MONTH).toString()+
+                cal.get(Calendar.DAY_OF_MONTH).toString()+
+                cal.get(Calendar.HOUR).toString()+
+                cal.get(Calendar.MINUTE).toString()+
+                cal.get(Calendar.SECOND).toString()+
+                cal.get(Calendar.MILLISECOND).toString()
+
+
+        val builder: AlertDialog.Builder = android.app.AlertDialog.Builder(this)
+        builder.setTitle("Ingrese el nombre del grupo")
+
+        val input = EditText(this)
+        input.setHint("Grupo")
+        input.inputType = InputType.TYPE_CLASS_TEXT
+        builder.setView(input)
+
+        builder.setPositiveButton("Guardar", DialogInterface.OnClickListener { dialog, which ->
             val data = hashMapOf(
-                "grupo" to "LADM",
-                "dia" to cal.get(Calendar.DAY_OF_MONTH).toString()+" "+
-                        cal.get(Calendar.YEAR).toString()+" "+
-                        cal.get(Calendar.MONTH).toString()
+                "id" to id,
+                "grupo" to input.text.toString(),
+                "dia" to cal.get(Calendar.DAY_OF_MONTH).toString()+"/"+
+                        cal.get(Calendar.MONTH).toString()+"/"+
+                        cal.get(Calendar.YEAR).toString()
             )
 
+            if(arrayList.size==0){
+                AlertDialog.Builder(this)
+                    .setTitle("Atencion")
+                    .setMessage("No hay asistencias")
+            }
 
             FirebaseFirestore.getInstance()
                 .collection("listas")
                 .document(id)
                 .set(data)
-                .addOnSuccessListener { 
+                .addOnSuccessListener {
                     arrayList.forEach {
                         val dataN = hashMapOf(
-                            "hora" to it.time,
+                            "id" to it.noControl,
+                            "date" to it.date,
+                            "hour" to it.hour,
+                            "name" to it.name
                         )
-                        
-                    FirebaseFirestore.getInstance()
-                        .collection("listas")
-                        .document(id)
-                        .collection("lista")
-                        .document(it.noControl)
-                        .set(dataN)
-                        .addOnSuccessListener {
-                            Toast.makeText(this, "Se creo la lista", Toast.LENGTH_SHORT).show()
-                        }
+
+                        FirebaseFirestore.getInstance()
+                            .collection("listas")
+                            .document(id)
+                            .collection("lista")
+                            .document(it.noControl)
+                            .set(dataN)
+                            .addOnSuccessListener {
+                                Toast.makeText(this, "Se creo la lista", Toast.LENGTH_SHORT).show()
+                            }
                     }
-                }*/
-        }
+                }
+        })
+        builder.setNegativeButton("Cancelar", DialogInterface.OnClickListener { dialog, which -> dialog.cancel() })
+
+        builder.show()
+
+
     }
 
     override fun onStart() {
@@ -356,15 +371,18 @@ class MainActivity : AppCompatActivity() {
                 arrayMessage.add(inputBuffer)
                 val current = LocalDateTime.now()
 
-                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-                val formatted = current.format(formatter)
+                var date = DateTimeFormatter.ofPattern("dd/mm/yyyy")
+                var hour = DateTimeFormatter.ofPattern("HH:mm")
+                var dateF = current.format(date)
+                var hourF = current.format(hour)
                 val list = List()
                 list.noControl = inputBuffer
-                list.time = formatted
+                list.date = dateF
+                list.hour = hourF
                 list.name = connectedDevice.toString()
                 Log.i("###310",arrayList.size.toString())
                 arrayList.add(list)
-                Log.i("###312",arrayList.size.toString())
+                Log.i("###312", arrayList[0].toString())
                 adapterMainChat?.add(connectedDevice + ": " + inputBuffer)
                 adapterMainChat?.notifyDataSetChanged()
                 adapter.notifyDataSetChanged()
